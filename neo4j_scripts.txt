@@ -1,0 +1,46 @@
+#LOAD PERSON DATA from gist
+
+LOAD CSV WITH HEADERS FROM "https://raw.githubusercontent.com/pbednar96/generated_data_Neo4j/master/generated_data/person.csv" AS row
+CREATE (n:Person)
+SET n = row
+
+CREATE INDEX ON :Person(personID)
+
+LOAD CSV WITH HEADERS FROM "https://raw.githubusercontent.com/pbednar96/generated_data_Neo4j/master/generated_data/skill.csv" AS row
+CREATE (n:Skill)
+SET n = row
+
+CREATE INDEX ON :Skill(skillID)
+
+LOAD CSV WITH HEADERS FROM "https://raw.githubusercontent.com/pbednar96/generated_data_Neo4j/master/generated_data/person_skill.csv" AS row
+MATCH (p:Person), (o:Skill)
+WHERE p.personID = row.personID AND o.skillID = row.skillID
+CREATE (o)-[details:EXPERIENCE_WITH]->(p)
+SET details = row
+
+LOAD CSV WITH HEADERS FROM "https://raw.githubusercontent.com/pbednar96/generated_data_Neo4j/master/generated_data/friendship.csv" AS row
+MATCH (p:Person), (o:Person)
+WHERE p.personID = row.personID AND o.personID = row.know_personID
+CREATE (o)-[details:FRIEND]->(p)
+SET details = row
+
+
+LOAD CSV WITH HEADERS FROM "https://raw.githubusercontent.com/pbednar96/generated_data_Neo4j/master/generated_data/company.csv" AS row
+CREATE (n:Company)
+SET n = row
+
+CREATE INDEX ON :Company(companyID)
+
+LOAD CSV WITH HEADERS FROM "https://raw.githubusercontent.com/pbednar96/generated_data_Neo4j/master/generated_data/company_person.csv" AS row
+MATCH (p:Person), (o:Company)
+WHERE p.personID = row.personID AND o.companyID = row.companyID
+CREATE (o)-[details:WORK_EXPERIENCE]->(p)
+SET details = row
+
+LOAD CSV WITH HEADERS FROM "https://raw.githubusercontent.com/pbednar96/generated_data_Neo4j/master/generated_data/workship.csv" AS row
+MATCH (p:Person), (o:Person)
+WHERE p.personID = row.personID AND o.personID = row.know_personID
+CREATE (o)-[details:WORK_WITH]->(p)
+SET details = row
+
+
